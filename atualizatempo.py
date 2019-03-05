@@ -362,7 +362,7 @@ def fases_lua2():
 	lista_final = []
 
 	for data in lista_media:
-		data_horario = data[2]
+		data_horario = data[2].decode('latin1')
 		fase = data[1]
 		caminho = lua_atributo(fase)
 
@@ -448,6 +448,7 @@ def cidade():
 		concatenacao = u"%s°C/%s°C" % (str(minima), str(maxima))
 		setattr(cidades_sc,localidade,concatenacao)
 
+
 def baixa_mar():
 	os.chdir('\\\\172.20.0.45\\jornalismo novo\\# Robôs\Tempo\# script')
 	global mares
@@ -462,14 +463,6 @@ def baixa_mar():
 	string_mares = re.sub(';','\n', mares_[amanha_])
 	cidade.mare = string_mares
 
-##def baixa_mar2(cidade = florianopolis_outros, codigo_cidade='60245'):
-##	global soup
-##	amanha = datetime.now() + timedelta(days = 1) - timedelta(hours = 5)
-##	dia, mes, ano = month(amanha.day), month(amanha.month), year(amanha.year)
-##	soup = make_soup("http://ondas.cptec.inpe.br/~rondas/mares/index.php?cod=%s&mes=%s&ano=%s"%(codigo_cidade, mes, ano))
-##	tuples_mares = re.findall('0*(\d\d?):(\d{2})[^\d\w]+([\d.]{3})',soup.find('strong', text='%s/%s' % (dia, mes)).parent.get_text())
-##	string_mares = ('\n').join(['%sh%s: %s'%t for t in tuples_mares])
-##	cidade.mare = string_mares
 
 def sentence_case(string):
 	lista = string.split(' ')
@@ -567,6 +560,8 @@ niveis_florianopolis = {mapa_estado:3, florianopolis:3, florianopolis_dias:3, ci
 niveis_joinville = {mapa_estado:3, joinville:3, joinville_dias:3, cidades_brasil:2, cidades_sc:2, joinville_outros:2, 'lista':[mapa_estado, joinville, cidades_brasil, cidades_sc, joinville_dias, joinville_outros]}
 
 def write_xml(niveis, cidade):
+	global root
+
 	root = etree.Element("root")
 	for objeto in niveis['lista']:
 ##		print objeto.__class__.__name__
@@ -608,6 +603,7 @@ def write_xml(niveis, cidade):
 ##				print '\t'+str(getattr(objeto, item).__dict__)
 				builder_item = etree.SubElement(builder_objeto, item)
 
+				global p
 				for subitem in lista_subitem:
 ##					print '\t'*2 + subitem+": ",
 					if subitem == "clima" or subitem == "imagem_satelite" or subitem == "caminho":
@@ -617,6 +613,7 @@ def write_xml(niveis, cidade):
 					else:
 ##					   print rgetattr(objeto, item + '.' + subitem)
 					   builder_subitem = etree.SubElement(builder_item, subitem)
+					   p = rgetattr(objeto, item + '.' + subitem)
 					   builder_subitem.text = rgetattr(objeto, item + '.' + subitem)
 
 	open("previsao_%s.xml"%(cidade), 'w').write(etree.tostring(root))
@@ -654,12 +651,12 @@ def debug():
 def local():
 	os.chdir(r'S:\# Robôs\Tempo\# script')
 
-if __name__ == '__main__':
-
-	print 'Vamos a Florianópolis:\n'
-
-	master(), write_xml(niveis_florianopolis, 'florianopolis')
-
-	print "\n\nTudo certo. Abra os arquivos para atualizá-los."
-
-	raw_input()
+##if __name__ == '__main__':
+##
+##	print 'Vamos a Florianópolis:\n'
+##
+##	master(), write_xml(niveis_florianopolis, 'florianopolis')
+##
+##	print "\n\nTudo certo. Abra os arquivos para atualizá-los."
+##
+##	raw_input()
