@@ -172,12 +172,11 @@ class Previsao():
 			json_ = json.loads(make_soup(site.format(dia.strftime('%Y/%m/%d'))).text)[0]
 
 			clima = json_['iconFenomeno1Desc']
+			if clima not in dicionario_icones: clima == 'none'
 			etree.SubElement(dia_xml, 'clima').set('href', dia_atributo(clima))
 
 			etree.SubElement(dia_xml, 'minima').text = json_['tempMinEUnidade']
 			etree.SubElement(dia_xml, 'maxima').text = json_['tempMinEUnidade']
-
-		self.d_print('Ok\n')
 
 
 	def cidades_sc(self):
@@ -206,9 +205,6 @@ class Previsao():
 
 		etree.SubElement(parent_xml, 'poente').text = poente
 		etree.SubElement(parent_xml, 'nascente').text = nascente
-
-		self.d_print('Ok\n')
-
 
 		self.d_print('Ok\n')
 
